@@ -1,0 +1,66 @@
+/* minimal, clean styles */
+:root {
+  --bg: #0b1020;
+  --panel: #121a33;
+  --text: #e8ecf3;
+  --muted: #a9b3c6;
+  --accent: #6ea8fe;
+  --error: #ff6b6b;
+  --border: #24304f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 980px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1 { margin: 0 0 8px; }
+.subtitle { color: var(--muted); margin: 0 0 24px; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+label { display: block; font-weight: 600; margin-bottom: 6px; }
+input, textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: #0e1630; color: var(--text); }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.col-span-2 { grid-column: span 2; }
+.mt-2 { margin-top: 8px; }
+
+.actions { margin-top: 20px; display: flex; gap: 10px; }
+button { background: var(--accent); border: 0; padding: 10px 14px; border-radius: 8px; color: #071022; font-weight: 700; cursor: pointer; }
+button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+.error { color: var(--error); font-size: 0.9rem; margin-top: 6px; }
+.muted { color: var(--muted); }
+
+/* react-select overrides */
+.rs__control { background: #0e1630 !important; border-color: var(--border) !important; }
+.rs__menu { background: #0e1630 !important; color: var(--text); }
+.rs__single-value, .rs__input-container, .rs__option { color: var(--text) !important; }
+.rs__option--is-focused { background: #152046 !important; }
+.rs__multi-value { background: #1a264a !important; }
+
+.submissions { margin-top: 28px; }
+.submissions ul { padding: 0; list-style: none; display: grid; gap: 12px; }
+.submissions li { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: #0e1630; }
+.submissions pre { background: #0a132a; padding: 10px; border-radius: 8px; overflow: auto; }
