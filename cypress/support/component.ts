@@ -1,0 +1,5 @@
+/// <reference types="cypress" />
+import './commands';
+import { mount } from 'cypress/react';
+
+Cypress.Commands.add('mount', mount);

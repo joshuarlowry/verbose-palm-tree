@@ -11,8 +11,9 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "strict": true,
-    "moduleResolution": "Bundler"
+    "moduleResolution": "Bundler",
+    "types": ["cypress", "mocha", "node"]
   },
-  "include": ["src"],
+  "include": ["src", "cypress", "cypress.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
