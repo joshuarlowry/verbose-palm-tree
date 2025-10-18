@@ -1,15 +1,14 @@
 import React, { useMemo } from 'react';
-import { Formik, Form, Field, FieldProps } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import Select from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSubmission } from '../store/formSlice';
 import type { RootState } from '../store/store';
+import { TextField } from './form/TextField';
+import { SelectField, type Option } from './form/SelectField';
+import { SubmissionsList } from './SubmissionsList';
 
-interface Option {
-  value: string;
-  label: string;
-}
+// Option type imported from SelectField
 
 const countryToStates: Record<string, Option[]> = {
   usa: [
@@ -117,44 +116,23 @@ export const ComplexForm: React.FC = () => {
           return (
             <Form noValidate>
               <div className="grid">
-                <div>
-                  <label htmlFor="fullName">Full name</label>
-                  <Field id="fullName" name="fullName" placeholder="Ada Lovelace" />
-                  {touched.fullName && errors.fullName && (
-                    <div className="error">{errors.fullName}</div>
-                  )}
-                </div>
+                <TextField name="fullName" label="Full name" placeholder="Ada Lovelace" />
+
+                <TextField name="email" label="Email" type="email" placeholder="ada@example.com" />
 
                 <div>
-                  <label htmlFor="email">Email</label>
-                  <Field id="email" name="email" type="email" placeholder="ada@example.com" />
-                  {touched.email && errors.email && (
-                    <div className="error">{errors.email}</div>
-                  )}
-                </div>
-
-                <div>
-                  <label>Category</label>
-                  <Field name="category">
-                    {({ field }: FieldProps) => (
-                      <Select
-                        classNamePrefix="rs"
-                        options={categories}
-                        placeholder="Select category..."
-                        isSearchable
-                        value={categories.find((o) => o.value === field.value) || null}
-                        onChange={(opt) => {
-                          const value = (opt as Option | null)?.value ?? '';
-                          setFieldValue('category', value);
-                          if (value !== 'other') setFieldValue('categoryOther', '');
-                        }}
-                        onBlur={() => field.onBlur({ target: { name: field.name } as any })}
-                      />
-                    )}
-                  </Field>
+                  <SelectField
+                    name="category"
+                    label="Category"
+                    options={categories}
+                    placeholder="Select category..."
+                    onAfterChange={(value) => {
+                      if (value !== 'other') setFieldValue('categoryOther', '');
+                    }}
+                  />
                   {values.category === 'other' && (
                     <div className="mt-2">
-                      <Field name="categoryOther" placeholder="Specify category" />
+                      <TextField name="categoryOther" label="Specify category" />
                       {touched.categoryOther && errors.categoryOther && (
                         <div className="error">{errors.categoryOther}</div>
                       )}
@@ -166,30 +144,21 @@ export const ComplexForm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label>Country</label>
-                  <Field name="country">
-                    {({ field }: FieldProps) => (
-                      <Select
-                        classNamePrefix="rs"
-                        options={countries}
-                        placeholder="Select country..."
-                        isSearchable
-                        value={countries.find((o) => o.value === field.value) || null}
-                        onChange={(opt) => {
-                          const value = (opt as Option | null)?.value ?? '';
-                          setFieldValue('country', value);
-                          // reset dependent fields when country changes
-                          setFieldValue('state', '');
-                          setFieldValue('stateOther', '');
-                          if (value !== 'other') setFieldValue('countryOther', '');
-                        }}
-                        onBlur={() => field.onBlur({ target: { name: field.name } as any })}
-                      />
-                    )}
-                  </Field>
+                  <SelectField
+                    name="country"
+                    label="Country"
+                    options={countries}
+                    placeholder="Select country..."
+                    onAfterChange={(value) => {
+                      const v = Array.isArray(value) ? '' : value;
+                      setFieldValue('state', '');
+                      setFieldValue('stateOther', '');
+                      if (v !== 'other') setFieldValue('countryOther', '');
+                    }}
+                  />
                   {values.country === 'other' && (
                     <div className="mt-2">
-                      <Field name="countryOther" placeholder="Specify country" />
+                      <TextField name="countryOther" label="Specify country" />
                       {touched.countryOther && errors.countryOther && (
                         <div className="error">{errors.countryOther}</div>
                       )}
@@ -202,27 +171,19 @@ export const ComplexForm: React.FC = () => {
 
                 {(values.country === 'usa' || values.country === 'canada') && (
                   <div>
-                    <label>State/Province</label>
-                    <Field name="state">
-                      {({ field }: FieldProps) => (
-                        <Select
-                          classNamePrefix="rs"
-                          options={statesOptions}
-                          placeholder="Select state/province..."
-                          isSearchable
-                          value={statesOptions.find((o) => o.value === field.value) || null}
-                          onChange={(opt) => {
-                            const value = (opt as Option | null)?.value ?? '';
-                            setFieldValue('state', value);
-                            if (value !== 'other') setFieldValue('stateOther', '');
-                          }}
-                          onBlur={() => field.onBlur({ target: { name: field.name } as any })}
-                        />
-                      )}
-                    </Field>
+                    <SelectField
+                      name="state"
+                      label="State/Province"
+                      options={statesOptions}
+                      placeholder="Select state/province..."
+                      onAfterChange={(value) => {
+                        const v = Array.isArray(value) ? '' : value;
+                        if (v !== 'other') setFieldValue('stateOther', '');
+                      }}
+                    />
                     {values.state === 'other' && (
                       <div className="mt-2">
-                        <Field name="stateOther" placeholder="Specify state/province" />
+                        <TextField name="stateOther" label="Specify state/province" />
                         {touched.stateOther && errors.stateOther && (
                           <div className="error">{errors.stateOther}</div>
                         )}
@@ -234,30 +195,17 @@ export const ComplexForm: React.FC = () => {
                   </div>
                 )}
 
-                <div>
-                  <label>Interests</label>
-                  <Field name="interests">
-                    {({ field }: FieldProps) => (
-                      <Select
-                        classNamePrefix="rs"
-                        options={interestsOptions}
-                        placeholder="Search interests..."
-                        isSearchable
-                        isMulti
-                        closeMenuOnSelect={false}
-                        value={interestsOptions.filter((o) => field.value?.includes(o.value))}
-                        onChange={(opts) => {
-                          const vals = (opts as Option[] | null)?.map((o) => o.value) ?? [];
-                          setFieldValue('interests', vals);
-                        }}
-                        onBlur={() => field.onBlur({ target: { name: field.name } as any })}
-                      />
-                    )}
-                  </Field>
+                <SelectField
+                  name="interests"
+                  label="Interests"
+                  options={interestsOptions}
+                  placeholder="Search interests..."
+                  isMulti
+                />
                   {touched.interests && (errors.interests as string) && (
                     <div className="error">{errors.interests as string}</div>
                   )}
-                </div>
+                
 
                 <div className="col-span-2">
                   <label htmlFor="notes">Notes</label>
@@ -277,23 +225,7 @@ export const ComplexForm: React.FC = () => {
         }}
       </Formik>
 
-      <div className="submissions">
-        <h2>Submissions</h2>
-        {submissions.length === 0 ? (
-          <div className="muted">No submissions yet.</div>
-        ) : (
-          <ul>
-            {submissions.map((s) => (
-              <li key={s.id}>
-                <div>
-                  <strong>{new Date(s.submittedAt).toLocaleString()}</strong>
-                </div>
-                <pre>{JSON.stringify(s.values, null, 2)}</pre>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <SubmissionsList submissions={submissions} />
     </div>
   );
 };
